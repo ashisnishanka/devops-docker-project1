@@ -1,5 +1,9 @@
 pipeline {
 agent any
+environment {
+    IMAGE_NAME = "devopsawstrainer/devops-integration"
+    IMAGE_TAG = "${BUILD_NUMBER}"
+}
 tools{
  jdk 'JAVA_HOME'
  maven 'M2_HOME'
@@ -27,10 +31,15 @@ tools{
             steps{
                 script{
                       sh'docker ps'
-                    sh 'docker build -t devopsawstrainer/devops-integration .'
+                      sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
                 }
             }
         }
+stage('Trivy Scan') {
+    steps {
+        sh "trivy image ${IMAGE_NAME}:${IMAGE_TAG}"
+    }
+}
 stage('Push image to Hub'){
             steps{
                 script{
