@@ -37,7 +37,11 @@ tools{
         }
 stage('Trivy Scan') {
     steps {
-        sh "trivy image ${IMAGE_NAME}:${IMAGE_TAG}"
+        //sh "trivy image ${IMAGE_NAME}:${IMAGE_TAG}"
+		 sh '''
+        mkdir -p /tmp/trivy-cache
+        trivy image --cache-dir /tmp/trivy-cache ${IMAGE_NAME}:${BUILD_NUMBER}
+        '''
     }
 }
 stage('Push image to Hub'){
